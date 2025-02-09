@@ -86,10 +86,11 @@ class MostrarIngresoDeEmpleado(BdConsultaIngresoEmpleado):
                 """
         self.cursor.execute(query)
         datos = self.cursor.fetchall()
-        for id,nombre,hora1 in datos:
+        return datos
+        """for id,nombre,hora1 in datos:
             print(f"ingreso de {nombre}: {hora1}")
 
-        input("Presionar enter...")
+        input("Presionar enter...")"""
 
 #Mostramos la salida de los empleados.
 class MostrarSalidaDeEmpleado(BdConsultaSalidaEmpleado):
@@ -102,40 +103,40 @@ class MostrarSalidaDeEmpleado(BdConsultaSalidaEmpleado):
                 """
         self.cursor.execute(query)
         datos = self.cursor.fetchall()
-        for id,nombre,hora1 in datos:
+        return datos
+        """for id,nombre,hora1 in datos:
             print(f"salida de {nombre}: {hora1}")
 
-        input("Presionar enter...")
+        input("Presionar enter...")"""
 
 #Ingresamos los datos de ingreso de un empleado a la base de datos.
 class InsertarIngresoAsistencia(BdInsertarIngreso):
     def __init__(self, conexion):
         self.conexion = conexion
         self.cursor = self.conexion.cursor()
-    def insertar_ingreso_empleado(self):
-        nombre = input("ingresar nombre: ")
+    def insertar_ingreso_empleado(self, nombre):
+        
         hora = datetime.now().time().strftime('%H:%M:%S')
         datos = (nombre, hora)
         query = """INSERT INTO asistencia_ingreso (nombre, hora) VALUES (%s, %s)"""
         self.cursor.execute(query, datos)
         self.conexion.commit()
         print(f"registro de entrada de {nombre} exitoso.")
-        input("presionar enter...")
 
 #Ingresamos los datos de salida de un empleado a la base de datos.
 class InsertarSalidaAsistencia(BdInsertarSalida):
     def __init__(self, conexion):
         self.conexion = conexion
         self.cursor = self.conexion.cursor()
-    def insertar_salida_empleado(self):
-        nombre = input("ingresar nombre: ")
+    def insertar_salida_empleado(self, nombre):
+        
         hora = datetime.now().time().strftime('%H:%M:%S')
         datos = (nombre, hora)
         query = """INSERT INTO asistencia_salida (nombre, hora) VALUES (%s, %s)"""
         self.cursor.execute(query, datos)
         self.conexion.commit()
         print(f"registro de salida de {nombre} exitoso.")
-        input("presionar enter...")
+        
 
 
 #funcion para limpiar la consola.
@@ -152,33 +153,10 @@ estado = ImprimirEstado(conexion)
 estado.estado()
 
 
-#Menu interactivo para que el usuario realice las operaciones de ingresar o mostrar los datos.
-while True:
-    limpiar_consola()
-    print("1- Registrar ingreso empleado.")
-    print("2- Registrar salida empleado")
-    print("3- mostrar ingresos de empleados.")
-    print("4- mostrar salida de empleados.")
-    print("5- salir")
-    opcion = int(input("ingresar opcion: "))
-    match opcion:
-        case 1:
-            ingresar_ingreso = InsertarIngresoAsistencia(conexion)
-            ingresar_ingreso.insertar_ingreso_empleado()
+ingresar_ingreso = InsertarIngresoAsistencia(conexion)
+ingresar_salida = InsertarSalidaAsistencia(conexion)
+consultar_ingreso = MostrarIngresoDeEmpleado(conexion)
+consultar_salida = MostrarSalidaDeEmpleado(conexion)
 
-        case 2:
-            ingresar_salida = InsertarSalidaAsistencia(conexion)
-            ingresar_salida.insertar_salida_empleado()
 
-        case 3:
-            consultar_ingreso = MostrarIngresoDeEmpleado(conexion)
-            consultar_ingreso.consultar_ingreso_de_empleado()
 
-        case 4:
-            consultar_salida = MostrarSalidaDeEmpleado(conexion)
-            consultar_salida.consultar_salida_de_empleado()
-        case 5:
-            break
-
-        case _:
-            pass
